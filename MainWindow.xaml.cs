@@ -2,7 +2,7 @@ using System.IO;
 using System.Windows;
 using Forms = System.Windows.Forms;
 
-namespace OpenServerOps;
+namespace Rackwatch;
 
 public partial class MainWindow : Window
 {
@@ -52,7 +52,7 @@ public partial class MainWindow : Window
     {
         if (!Directory.Exists(path)) { HealthResult.Text = "The selected server folder does not exist."; return; }
         serverRoot = Path.GetFullPath(path); ServerName.Text = new DirectoryInfo(serverRoot).Name; ServerPath.Text = serverRoot;
-        logFiles = Array.Empty<string>(); RefreshLogList(); FindingCount.Text = "—"; LastCheck.Text = "—";
+        logFiles = Array.Empty<string>(); RefreshLogList(); FindingCount.Text = ":"; LastCheck.Text = ":";
         StorageResult.Text = "Not checked"; AddonResult.Text = "Not checked"; BackupResult.Text = "Not checked";
         StateText.Text = "Ready"; HealthResult.Text = "Ready for read-only checks"; Activity.Text = $"Selected {DateTime.Now:T}\n{serverRoot}";
     }
@@ -63,7 +63,7 @@ public partial class MainWindow : Window
         if (serverRoot is null) { HealthResult.Text = "Choose a server folder first."; return; }
         using var cancellation = new CancellationTokenSource();
         scanCancellation = cancellation;
-        FindingCount.Text = "—"; StorageResult.Text = "Awaiting results"; AddonResult.Text = "Awaiting results"; BackupResult.Text = "Awaiting results";
+        FindingCount.Text = ":"; StorageResult.Text = "Awaiting results"; AddonResult.Text = "Awaiting results"; BackupResult.Text = "Awaiting results";
         logFiles = Array.Empty<string>(); RefreshLogList();
         ChooseServer.IsEnabled = false; RunChecks.Content = "Cancel scan";
         StateText.Text = "Scanning"; Activity.Text = "Reading the selected folder. You can cancel this scan.";
@@ -100,7 +100,7 @@ public partial class MainWindow : Window
         {
             Title = html ? "Export HTML audit report" : "Export JSON audit data",
             Filter = html ? "HTML report (*.html)|*.html" : "JSON data (*.json)|*.json",
-            FileName = $"OpenServerOps-{new DirectoryInfo(latestSnapshot.ServerRoot).Name}-{DateTime.Now:yyyyMMdd-HHmm}.{(html ? "html" : "json")}"
+            FileName = $"Rackwatch-{new DirectoryInfo(latestSnapshot.ServerRoot).Name}-{DateTime.Now:yyyyMMdd-HHmm}.{(html ? "html" : "json")}"
         };
         if (dialog.ShowDialog() != Forms.DialogResult.OK) return;
         if (html) AuditReport.WriteHtml(latestSnapshot, dialog.FileName); else AuditReport.WriteJson(latestSnapshot, dialog.FileName);

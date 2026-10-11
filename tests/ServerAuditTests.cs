@@ -1,4 +1,4 @@
-﻿using System.IO.Compression;
+using System.IO.Compression;
 using System.Net;
 using System.IO;
 using System.Net.Sockets;
@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Security.Cryptography;
-using OpenServerOps;
+using Rackwatch;
 
 var root = Path.Combine(Path.GetTempPath(), "openserverops-addons-workshop-backup-" + Guid.NewGuid().ToString("N"));
 var outside = root + "-outside";
@@ -56,7 +56,7 @@ try
         AuditReport.WriteJson(snapshot, jsonReport); AuditReport.WriteHtml(snapshot, htmlReport);
     }
     Require(snapshot.RiskScore > 0 && snapshot.HealthGrade is not "A", "Risk grading ignored known findings.");
-    Require(File.ReadAllText(jsonReport).Contains("\"RiskScore\"") && File.ReadAllText(htmlReport).Contains("OPENSERVEROPS 2.0 AUDIT"), "Report export failed.");
+    Require(File.ReadAllText(jsonReport).Contains("\"RiskScore\"") && File.ReadAllText(htmlReport).Contains("RACKWATCH 2.0 AUDIT"), "Report export failed.");
     if (replaceSupported)
     {
         Require(!File.ReadAllText(jsonReport).Contains("stale JSON report") && !File.ReadAllText(htmlReport).Contains("stale HTML report"), "Successful report export did not replace existing content.");

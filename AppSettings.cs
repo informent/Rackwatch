@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text.Json;
 
-namespace OpenServerOps;
+namespace Rackwatch;
 
 public sealed class AppSettings
 {

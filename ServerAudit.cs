@@ -1,10 +1,10 @@
-﻿using System.IO;
+using System.IO;
 using System.IO.Compression;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace OpenServerOps;
+namespace Rackwatch;
 
 public sealed record PortResult(int Port, bool Open);
 public sealed record AuditIssue(string Path, string Message);

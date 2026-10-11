@@ -1,10 +1,10 @@
-﻿param([Parameter(Mandatory=$true)][string]$Exe)
+param([Parameter(Mandatory=$true)][string]$Exe)
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-$fixture = Join-Path ([IO.Path]::GetTempPath()) ('OpenServerOps-ui-' + [guid]::NewGuid().ToString('N') + '-b')
+$fixture = Join-Path ([IO.Path]::GetTempPath()) ('Rackwatch-ui-' + [guid]::NewGuid().ToString('N') + '-b')
 $null = New-Item -ItemType Directory -Path (Join-Path $fixture 'a'),(Join-Path $fixture 'b'),(Join-Path $fixture 'addons')
 [IO.File]::WriteAllText((Join-Path $fixture 'a/server.log'), 'FIRST_LOG_MARKER')
 [IO.File]::WriteAllText((Join-Path $fixture 'b/server.log'), ('historical line' * 150000) + "`nERROR SECOND_LOG_MARKER")
@@ -57,5 +57,5 @@ try {
 } finally {
     if ($process -and -not $process.HasExited) { Stop-Process -Id $process.Id -Force }
     $resolved = [IO.Path]::GetFullPath($fixture)
-    if ([IO.Path]::GetDirectoryName($resolved) -eq [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\') -and [IO.Path]::GetFileName($resolved).StartsWith('OpenServerOps-ui-')) { Remove-Item -LiteralPath $resolved -Recurse -Force }
+    if ([IO.Path]::GetDirectoryName($resolved) -eq [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\') -and [IO.Path]::GetFileName($resolved).StartsWith('Rackwatch-ui-')) { Remove-Item -LiteralPath $resolved -Recurse -Force }
 }

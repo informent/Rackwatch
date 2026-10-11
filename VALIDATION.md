@@ -1,4 +1,4 @@
-# OpenServerOps 2.0.1 validation
+# Rackwatch 2.0.1 validation
 
 ## Automated coverage
 
