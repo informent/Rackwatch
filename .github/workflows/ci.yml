@@ -19,5 +19,5 @@ jobs:
       - run: pwsh -File tests/Test-SigningPath.ps1
       - uses: actions/upload-artifact@v7
         with:
-          name: OpenServerOps-win-x64
+          name: Rackwatch-win-x64
           path: test-output/release-*/

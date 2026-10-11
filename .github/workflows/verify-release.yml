@@ -31,4 +31,4 @@ jobs:
           }
       - name: Exercise downloaded standalone executable
         shell: powershell
-        run: ./tests/PackageUi.ps1 -Exe "${{ github.workspace }}/verified/OpenServerOps.exe"
+        run: ./tests/PackageUi.ps1 -Exe "${{ github.workspace }}/verified/Rackwatch.exe"

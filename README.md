@@ -1,4 +1,4 @@
-# OpenServerOps
+# Rackwatch
 
 A local Windows server inventory and troubleshooting console. Choose a server folder, run checks, and inspect findings and log previews. Scans do not modify server files or connect to a hosting account.
 
@@ -18,10 +18,10 @@ A local Windows server inventory and troubleshooting console. Choose a server fo
 
 ## Run
 
-Open `OpenServerOps.exe`, choose **Choose server**, and then **Run checks**. You can also preselect a folder without starting a scan:
+Open `Rackwatch.exe`, choose **Choose server**, and then **Run checks**. You can also preselect a folder without starting a scan:
 
 ```powershell
-.\OpenServerOps.exe --folder "C:\Servers\Example"
+.\Rackwatch.exe --folder "C:\Servers\Example"
 ```
 
 The optional port check connects to localhost over TCP. It does not test UDP game-server availability, remote servers, or application health. Process counts match the selected folder's name and do not establish that a server is healthy.
@@ -49,3 +49,9 @@ See [VALIDATION.md](VALIDATION.md) for the release checks and limits.
 ## License
 
 MIT.
+
+## Name change
+
+Rackwatch replaces OpenServerOps. New builds use Rackwatch.exe and Rackwatch.csproj. Existing releases remain available under their original names.
+
+Existing settings and data locations retain the OpenServerOps folder name for compatibility. Keep these folders when upgrading; no automatic move or data format change is required.
