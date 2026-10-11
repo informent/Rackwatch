@@ -6,3 +6,6 @@ package-stage/
 *.suo
 obj-*/
 test-output/
+
+installer-payload/
+installer-output/
