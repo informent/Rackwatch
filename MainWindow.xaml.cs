@@ -75,10 +75,10 @@ public partial class MainWindow : Window
             StateText.Text = result.Issues.Count > 0 ? "Partial scan" : "Checked";
             LastCheck.Text = DateTime.Now.ToShortTimeString(); FindingCount.Text = result.FindingCount.ToString();
             var disk = result.FreeBytes < 0 ? "Disk space unavailable" : $"{result.FreeBytes / (1024d * 1024 * 1024):N1} GB free";
-            HealthResult.Text = $"{disk} Â· localhost TCP {port} {(result.Ports[0].Open ? "open" : "not reached")}";
+            HealthResult.Text = $"{disk} · localhost TCP {port} {(result.Ports[0].Open ? "open" : "not reached")}";
             StorageResult.Text = $"{result.FileCount:N0} files; {result.SkippedLinks:N0} links skipped";
-            AddonResult.Text = $"{result.AddonFileCount:N0} addon files Â· {result.LogCount:N0} logs Â· {result.WorkshopFileCount:N0} workshop files";
-            BackupResult.Text = $"{result.ValidBackupCount:N0} ZIP indexes readable Â· {result.InvalidZipCount:N0} failed Â· {result.UnsupportedBackupCount:N0} unsupported";
+            AddonResult.Text = $"{result.AddonFileCount:N0} addon files · {result.LogCount:N0} logs · {result.WorkshopFileCount:N0} workshop files";
+            BackupResult.Text = $"{result.ValidBackupCount:N0} ZIP indexes readable · {result.InvalidZipCount:N0} failed · {result.UnsupportedBackupCount:N0} unsupported";
             logFiles = result.LogFiles; RefreshLogList();
             var age = result.OldestBackupDays is double days ? $"{days:N0} days" : "none found";
             Activity.Text = $"Read-only audit completed {DateTime.Now:T}\nFiles: {result.FileCount:N0}; findings: {result.FindingCount}\nLargest log: {result.LargestLog ?? "none"}\nEmpty addon files: {result.SuspiciousAddonFiles}; empty workshop files: {result.SuspiciousWorkshopFiles}\nArtifacts hashed: {result.HashedArtifactCount}; not hashed: {result.UnhashedArtifacts}\nOldest archive: {age}\nSkipped links: {result.SkippedLinks}; read failures: {result.Issues.Count}\nProcess-name matches: {result.MatchingProcesses} (not a health check)\nTCP checks do not test UDP game ports. ZIP indexes do not prove restore integrity.\nNo files were changed.";
