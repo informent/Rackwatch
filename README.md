@@ -56,16 +56,29 @@ Rackwatch replaces OpenServerOps. New builds use Rackwatch.exe and Rackwatch.csp
 
 Existing settings and data locations retain the OpenServerOps folder name for compatibility. Keep these folders when upgrading; no automatic move or data format change is required.
 
+## Unattended server audits
+
+Version 2.2.0 supports scheduled audits without opening a window:
+
+```powershell
+$p = Start-Process .\Rackwatch.exe -WindowStyle Hidden -ArgumentList '--scan --folder "C:\Servers\Example" --output "C:\Reports\audit.json" --fail-on-findings' -Wait -PassThru
+$p.ExitCode
+```
+
+The output directory must exist and the JSON filename must be new, outside the scanned server folder. Reports contain the same inventory, risk grade, coverage and read issues as desktop scans. The command never changes server files or replaces an existing report.
+
+No network probes run by default. Add `--ports 27015,27016` to check up to 32 distinct localhost TCP ports. With `--fail-on-findings`, exit 3 means the report was written with findings, skipped links or an unreachable requested port. Exit 0 means export succeeded, 2 means invalid arguments, and 1 means the scan or export failed. A two-minute cancellation budget is checked between filesystem operations. Use the report's coverage fields when deciding whether a scan is complete.
+
 ## Automatic setup
 
 Windows setup packages install Rackwatch for your current account, bundle the .NET runtime, create a Start menu shortcut and register an uninstaller. A desktop shortcut is optional. No administrator password or manual file copying is required. Existing settings and saved data stay in their current locations. The portable ZIP remains available.
 
-Download `Rackwatch-v2.1.1-setup.exe` from Releases and run it.
+Download `Rackwatch-v2.2.0-setup.exe` from Releases and run it.
 
 For unattended deployment:
 
 ```powershell
-Start-Process .\Rackwatch-v2.1.1-setup.exe -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-' -Wait -PassThru
+Start-Process .\Rackwatch-v2.2.0-setup.exe -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-' -Wait -PassThru
 ```
 
 Build from source with the [open-source Inno Setup compiler](https://github.com/jrsoftware/issrc) installed:

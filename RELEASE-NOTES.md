@@ -1,3 +1,13 @@
+# Rackwatch 2.2.0
+
+Rackwatch can now write unattended server audits with explicit localhost TCP port selection and an optional failing exit status for findings. Reports must use a new filename outside the server tree. Desktop scans remain available.
+
+## Verification
+
+Engine regressions cover structured findings, default offline behavior, report preservation, port validation and output boundaries. The self-contained EXE passed unattended audits and exit-code checks locally. Hosted CI covers the existing ACL and atomic replacement tests that the local sandbox skips.
+
+Automatic setup and portable builds include the .NET runtime. Installers are unsigned. ZIP checksums verify downloaded bytes; they do not authenticate an unknown publisher.
+
 # Rackwatch 2.0.1
 
 This patch hardens audit report exports. JSON and HTML reports are staged beside their destination, flushed before publication, and replace existing files with Windows replace-file semantics to retain destination metadata. Failed writes leave the previous report in place and remove the temporary output.

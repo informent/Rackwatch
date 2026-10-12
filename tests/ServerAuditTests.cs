@@ -140,3 +140,25 @@ finally
     foreach (var link in links) Directory.Delete(link);
     Directory.Delete(root, true); Directory.Delete(outside, true);
 }
+
+var cliRoot = Path.Combine(Path.GetTempPath(), "rackwatch-cli-" + Guid.NewGuid().ToString("N"));
+Directory.CreateDirectory(Path.Combine(cliRoot, "server", "addons"));
+try
+{
+    File.WriteAllBytes(Path.Combine(cliRoot, "server", "addons", "empty.lua"), Array.Empty<byte>());
+    var output = Path.Combine(cliRoot, "report.json");
+    var cliArguments = new[] { "--scan", "--folder", Path.Combine(cliRoot, "server"), "--output", output, "--fail-on-findings" };
+    Require(CommandLine.Run(cliArguments) == 3, "Unattended findings did not produce status 3.");
+    using var report = System.Text.Json.JsonDocument.Parse(File.ReadAllText(output));
+    Require(report.RootElement.GetProperty("Result").GetProperty("SuspiciousAddonFiles").GetInt32() == 1, "Unattended evidence missing.");
+    Require(report.RootElement.GetProperty("Result").GetProperty("Ports").GetArrayLength() == 0, "Unrequested network probe occurred.");
+    var original = File.ReadAllText(output);
+    Require(CommandLine.Run(cliArguments) == 2 && File.ReadAllText(output) == original, "Existing report was replaced.");
+    Require(CommandLine.Run(new[] { "--scan", "--folder", Path.Combine(cliRoot, "server"), "--output", Path.Combine(cliRoot, "server", "unsafe.json") }) == 2, "Output inside scanned server was allowed.");
+    Require(CommandLine.Run(new[] { "--scan", "--folder", cliRoot, "--output", output, "--ports", "0" }) == 2, "Invalid port accepted.");
+    Require(CommandLine.Run(new[] { "--scan", "--folder", cliRoot, "--folder", cliRoot, "--output", output }) == 2, "Duplicate argument accepted.");
+    File.Delete(output);
+    Require(CommandLine.Run(cliArguments[..^1]) == 0 && File.Exists(output), "Informational scan exit failed.");
+}
+finally { Directory.Delete(cliRoot, true); }
+Console.WriteLine("PASS: unattended audits, finding exits, default offline operation, report preservation and argument checks");
