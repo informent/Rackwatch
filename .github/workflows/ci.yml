@@ -17,6 +17,12 @@ jobs:
       - run: pwsh -File tests/Test-Release.ps1
       - run: pwsh -File tests/Test-UI.ps1
       - run: pwsh -File tests/Test-SigningPath.ps1
+      - name: Verify unattended workflow
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem test-output -Filter Rackwatch.exe -Recurse | Select-Object -First 1
+          if (!$exe) { throw 'Published executable missing' }
+          ./tests/Test-Headless.ps1 -Exe $exe.FullName
       - uses: actions/upload-artifact@v7
         with:
           name: Rackwatch-win-x64

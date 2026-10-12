@@ -16,6 +16,7 @@ public partial class App : System.Windows.Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        if (e.Args.Length > 0 && e.Args[0] != "--folder") { Shutdown(CommandLine.Run(e.Args)); return; }
         ShutdownMode = ShutdownMode.OnMainWindowClose;
         var initialFolder = e.Args.Length == 2 && e.Args[0] == "--folder" ? e.Args[1] : null;
         var window = new MainWindow(initialFolder);

@@ -11,24 +11,39 @@ permissions:
 jobs:
   verify:
     runs-on: windows-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
-      - name: Download release and verify GitHub digests
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: actions/setup-dotnet@v6
+        with: { dotnet-version: 10.0.x }
+      - name: Download published assets and verify their GitHub digests
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ inputs.tag }}
         run: |
+          if ($env:RELEASE_TAG -notmatch '^v\d+\.\d+\.\d+$') { throw 'Invalid release tag' }
           gh release download $env:RELEASE_TAG --dir verified
-          if ($LASTEXITCODE -ne 0) { throw 'Release download failed.' }
+          if ($LASTEXITCODE -ne 0) { throw 'Release download failed' }
           $release = gh release view $env:RELEASE_TAG --json assets | ConvertFrom-Json
-          if ($LASTEXITCODE -ne 0) { throw 'Release lookup failed.' }
+          if ($LASTEXITCODE -ne 0) { throw 'Release lookup failed' }
           foreach ($asset in $release.assets) {
             $hash = 'sha256:' + (Get-FileHash -LiteralPath (Join-Path verified $asset.name) -Algorithm SHA256).Hash.ToLowerInvariant()
             if ($hash -ne $asset.digest) { throw "Asset hash mismatch: $($asset.name)" }
-            Write-Host "Verified published digest: $($asset.name)"
           }
-      - name: Exercise downloaded standalone executable
+          $zip = Join-Path verified ('Rackwatch-' + $env:RELEASE_TAG + '-win-x64.zip')
+          Expand-Archive -LiteralPath $zip -DestinationPath verified/portable
+      - name: Verify the downloaded portable command workflow
+        shell: pwsh
+        run: ./tests/Test-Headless.ps1 -Exe (Join-Path $PWD 'verified/portable/Rackwatch.exe')
+      - name: Verify the downloaded portable desktop workflow
         shell: powershell
-        run: ./tests/PackageUi.ps1 -Exe "${{ github.workspace }}/verified/Rackwatch.exe"
+        run: ./tests/PackageUi.ps1 -Exe "${{ github.workspace }}/verified/portable/Rackwatch.exe"
+      - name: Verify the downloaded installer lifecycle
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: ./tests/Test-Installer.ps1 -Setup (Join-Path $PWD ('verified/Rackwatch-' + $env:RELEASE_TAG + '-setup.exe'))
